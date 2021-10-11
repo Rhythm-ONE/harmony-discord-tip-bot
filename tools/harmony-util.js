@@ -2,16 +2,7 @@ const { Harmony } = require('@harmony-js/core');
 const { getAddressFromPrivateKey } = require('@harmony-js/crypto');
 const { Account } = require('@harmony-js/account');
 
-const {
-  ChainID,
-  ChainType,
-  hexToNumber,
-  numberToHex,
-  fromWei,
-  Units,
-  Unit,
-} = require('@harmony-js/utils');
-
+const { ChainID, ChainType, hexToNumber, fromWei, Units, Unit } = require('@harmony-js/utils');
 
 module.exports = {
     getBalance: (privateKey) => {

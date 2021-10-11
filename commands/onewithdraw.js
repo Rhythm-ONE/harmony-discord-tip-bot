@@ -4,68 +4,68 @@ const { getBalance, sendTransaction, getAddress } = require('../tools/harmony-ut
 const { MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js')
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('onewithdraw')
-		.setDescription('Withdraw $ONE to a given address')
+    data: new SlashCommandBuilder()
+        .setName('onewithdraw')
+        .setDescription('Withdraw $ONE to a given address')
         .addStringOption(option => option.setName('address').setDescription('Address to send the $ONE to').setRequired(true))
-		.addIntegerOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
-	async execute(interaction) {
+        .addIntegerOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
+    async execute(interaction) {
         await interaction.reply({ content: 'Working on it...', ephemeral: true });
 
-		const receiverAddress = interaction.options.getString('address');
-		const amount = interaction.options.getInteger('amount');
+        const receiverAddress = interaction.options.getString('address');
+        const amount = interaction.options.getInteger('amount');
 
-		if (amount < 1) {
-			return interaction.editReply('The amount must be at least 1 $ONE');
-		}
+        if (amount < 1) {
+            return interaction.editReply('The amount must be at least 1 $ONE');
+        }
 
-		const senderPrivateKey = await getWalletPrivateKey(interaction.user.id);
+        const senderPrivateKey = await getWalletPrivateKey(interaction.user.id);
 
-		if (senderPrivateKey == null) {
-			return interaction.editReply('Error retrieving wallet information');
-		}
+        if (senderPrivateKey == null) {
+            return interaction.editReply('Error retrieving wallet information');
+        }
 
         const senderAddress = getAddress(senderPrivateKey);
         if (senderAddress == receiverAddress) {
-			return interaction.editReply('You must send to a different address than your discord tip bot\'s');
-		}
+            return interaction.editReply('You must send to a different address than your discord tip bot\'s');
+        }
 
-		const senderBalance = await getBalance(senderPrivateKey);
+        const senderBalance = await getBalance(senderPrivateKey);
 
-		if (senderBalance < amount) {
-			return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` $ONE`)
-		}
+        if (senderBalance < amount) {
+            return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` $ONE`)
+        }
 
-		const row = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('confirm')
-					.setLabel('Submit')
-					.setStyle('PRIMARY'),
-				new MessageButton()
-					.setCustomId('cancel')
-					.setLabel('Cancel')
-					.setStyle('SECONDARY'),
-			);
+        const row = new MessageActionRow()
+            .addComponents(
+                new MessageButton()
+                    .setCustomId('confirm')
+                    .setLabel('Submit')
+                    .setStyle('PRIMARY'),
+                new MessageButton()
+                    .setCustomId('cancel')
+                    .setLabel('Cancel')
+                    .setStyle('SECONDARY'),
+            );
 
-		interaction.editReply({
-			content: `Are you sure you'd like to withdraw \`${amount}\` $ONE to address \`${receiverAddress}\`?`,
-			components: [row]
-		});
+        interaction.editReply({
+            content: `Are you sure you'd like to withdraw \`${amount}\` $ONE to address \`${receiverAddress}\`?`,
+            components: [row]
+        });
 
-		const filter = i => {
-			i.deferUpdate();
-			return i.user.id === interaction.user.id;
-		};
+        const filter = i => {
+            i.deferUpdate();
+            return i.user.id === interaction.user.id;
+        };
 
         const reply = await interaction.fetchReply();
 
-		var selection = await reply.awaitMessageComponent({ filter, componentType: 'BUTTON', time: 30000 })
-			.then(buttonInteraction => {
+        var selection = await reply.awaitMessageComponent({ filter, componentType: 'BUTTON', time: 30000 })
+            .then(buttonInteraction => {
                 return buttonInteraction.customId;
             }).catch(err => {
                 return 'timeout';
-			});
+            });
 
         switch(selection) {
             case 'confirm':
@@ -80,5 +80,5 @@ module.exports = {
             default:
                 return interaction.editReply('Unknown error');
         }
-	},
+    },
 };

@@ -18,9 +18,9 @@ function saveWallet(userId, privateKey, encryptedPrivateKey) {
 }
 
 function createWalletForUser(userId) {
-	const privateKey = generatePrivateKey();
+    const privateKey = generatePrivateKey();
 
-	return encryptPhrase(privateKey, encryptionPassword)
+    return encryptPhrase(privateKey, encryptionPassword)
         .then((encryptedPrivateKey) => saveWallet(userId, privateKey, encryptedPrivateKey))
 }
 
