@@ -9,7 +9,7 @@ module.exports = {
         .addStringOption(option => option.setName('address').setDescription('Address to send the $ONE to').setRequired(true))
 		.addIntegerOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
 	async execute(interaction) {
-        await interaction.reply('Working on it...');
+        await interaction.reply({ content: 'Working on it...', ephemeral: true });
 
 		const receiverAddress = interaction.options.getString('address');
 		const amount = interaction.options.getInteger('amount');
