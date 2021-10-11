@@ -30,7 +30,7 @@ module.exports = {
 			return interaction.editReply('Error retrieving wallet information');
 		}
 
-		var senderBalance = getBalance(senderPrivateKey);
+		var senderBalance = await getBalance(senderPrivateKey);
 
 		if (senderBalance < amount) {
 			return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` $ONE`)

@@ -30,10 +30,10 @@ module.exports = {
 			return interaction.editReply('You must send to a different address than your discord tip bot\'s');
 		}
 
-		const senderBalance = getBalance(senderPrivateKey);
+		const senderBalance = await getBalance(senderPrivateKey);
 
 		if (senderBalance < amount) {
-			return interaction.editReply(`Insufficient balance. Current balance: \`${oneBalance}\` $ONE`)
+			return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` $ONE`)
 		}
 
 		const row = new MessageActionRow()
