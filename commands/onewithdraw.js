@@ -8,15 +8,15 @@ module.exports = {
         .setName('onewithdraw')
         .setDescription('Withdraw $ONE to a given address')
         .addStringOption(option => option.setName('address').setDescription('Address to send the $ONE to').setRequired(true))
-        .addIntegerOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
+        .addNumberOption(option => option.setName('amount').setDescription('Amount of $ONE to withdraw').setRequired(true)),
     async execute(interaction) {
         await interaction.reply({ content: 'Working on it...', ephemeral: true });
 
         const receiverAddress = interaction.options.getString('address');
-        const amount = interaction.options.getInteger('amount');
+        const amount = interaction.options.getNumber('amount');
 
-        if (amount < 1) {
-            return interaction.editReply('The amount must be at least 1 $ONE');
+        if (amount <= 0) {
+            return interaction.editReply('Invalid amount');
         }
 
         const senderPrivateKey = await getWalletPrivateKey(interaction.user.id);

@@ -7,14 +7,14 @@ module.exports = {
         .setName('onetip')
         .setDescription('Tip the user a given amount of $ONE')
         .addUserOption(option => option.setName('user').setDescription('The user').setRequired(true))
-        .addIntegerOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
+        .addNumberOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
     async execute(interaction) {
         await interaction.reply('Working on it...');
 
-        const amount = interaction.options.getInteger('amount');
+        const amount = interaction.options.getNumber('amount');
 
-        if (amount < 1 || amount > 100) {
-            return interaction.editReply('The amount must be between 1 and 100 $ONE');
+        if (amount < 0.1 || amount > 100) {
+            return interaction.editReply('The amount must be between 0.1 and 100 $ONE');
         }
 
         const receivingUser = interaction.options.getUser('user');
