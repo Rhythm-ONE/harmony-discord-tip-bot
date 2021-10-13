@@ -5,7 +5,7 @@ const { get } = require('@firebase/database');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('onebalance')
+        .setName('balance')
         .setDescription('Retrieve balance of $ONE in your tip jar'),
     async execute(interaction) {
     interaction.user.id;

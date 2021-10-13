@@ -4,7 +4,7 @@ const { getBalance, sendTransaction, getAddress } = require('../tools/harmony-ut
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('onetip')
+        .setName('tip')
         .setDescription('Tip the user a given amount of $ONE')
         .addUserOption(option => option.setName('user').setDescription('The user').setRequired(true))
         .addNumberOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
