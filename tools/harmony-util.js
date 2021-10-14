@@ -7,10 +7,10 @@ const { ChainID, ChainType, hexToNumber, fromWei, Units, Unit } = require('@harm
 module.exports = {
     getBalance: (privateKey) => {
         const hmy = new Harmony(
-            'https://api.s0.b.hmny.io/',
+            'https://api.s0.t.hmny.io/',
             {
                 chainType: ChainType.Harmony,
-                chainId: ChainID.HmyTestnet,
+                chainId: ChainID.HmyMainnet,
             },
         );
 
@@ -25,10 +25,10 @@ module.exports = {
 
     sendTransaction: async (privateKeyFrom, sendToAddress, amount) => {
         const hmy = new Harmony(
-            'https://api.s0.b.hmny.io/',
+            'https://api.s0.t.hmny.io/',
             {
                 chainType: ChainType.Harmony,
-                chainId: ChainID.HmyTestnet,
+                chainId: ChainID.HmyMainnet,
             },
         );
 

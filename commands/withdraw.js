@@ -72,7 +72,7 @@ module.exports = {
                 interaction.editReply({content: 'Working on it...', components: []});
                 const transaction = await sendTransaction(senderPrivateKey, receiverAddress, amount);
                 return interaction.editReply(
-                    `Your withdrawal of \`${amount}\` $ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<https://explorer.testnet.harmony.one/tx/${transaction.result}>)`);
+                    `Your withdrawal of \`${amount}\` $ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<https://explorer.harmony.one/tx/${transaction.result}>)`);
             case 'cancel':
                 return interaction.editReply({content: 'Withdrawal canceled', components: []});
             case 'timeout':

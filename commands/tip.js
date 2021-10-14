@@ -40,6 +40,6 @@ module.exports = {
         var transaction = await sendTransaction(senderPrivateKey, receiverAddress, amount);
 
         return interaction.editReply(
-            `Your tip of \`${amount}\` $ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<https://explorer.testnet.harmony.one/tx/${transaction.result}>)`);
+            `Your tip of \`${amount}\` $ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<https://explorer.harmony.one/tx/${transaction.result}>)`);
     },
 };
