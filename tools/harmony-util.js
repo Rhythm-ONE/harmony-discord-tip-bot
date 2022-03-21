@@ -40,7 +40,7 @@ module.exports = {
             gasLimit: '21000',
             shardID: 0,
             toShardID: 0,
-            gasPrice: new hmy.utils.Unit('1').asGwei().toWei(),
+            gasPrice: new hmy.utils.Unit('30').asGwei().toWei(),
         });
 
         const signedTxn = await hmy.wallet.signTransaction(txn);
