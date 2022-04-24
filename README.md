@@ -43,7 +43,7 @@ The `/balance` command allows you to check your balance and view your wallet add
 --------------------------------
 
 ### /withdraw <address> <amount>
-The `/withdraw` command allows you to send ONE from your tip bot wallet to an external wallet. There are two arguments, the wallet address to send to and the amount to send. After submitting the command, a confirmation message is shown so you can verify that the address and amount look correct before sending the transaction. Keep in mind that a small fraction of ONE will need to remain in the wallet to cover transaction fees.
+The `/withdraw` command allows you to send ONE from your tip bot wallet to an external wallet. There are two arguments, the wallet address to send to and the amount to send. Keep in mind that a small fraction of ONE will need to remain in the wallet to cover transaction fees.
 
 **Example:**
 >/withdraw address one1yhhvm7hsrqc2x7ld9hfcza7f2sy7n222relwnp amount 1  
