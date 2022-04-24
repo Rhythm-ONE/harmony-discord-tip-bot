@@ -20,7 +20,11 @@ module.exports = {
 
         const receivingUser = interaction.options.getUser('user');
 
-        if (receivingUser.id == interaction.user.id){
+        if (receivingUser.bot) {
+            return interaction.editReply('Unable to send a tip to a bot');
+        }
+
+        if (receivingUser.id == interaction.user.id) {
             return interaction.editReply('Unable to send a tip to yourself');
         }
 
@@ -44,8 +48,10 @@ module.exports = {
             return interaction.editReply(`Error sending tip: ${transactionResult.error.message}`);
         }
         if (!!transactionResult.result) {
-            return interaction.editReply(
+            const initialReply = await interaction.editReply(
                 `Your tip of \`${amount}\` ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
+            initialReply.reply({ content: `<@${receivingUser.id}> You've been tipped!` })
+            return;
         }
         return interaction.editReply({ content: 'Unknown error', components: [] });
     },
