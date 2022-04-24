@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getWalletPrivateKey } = require('../tools/user-wallet');
 const { getBalance, sendTransaction, getAddress } = require('../tools/harmony-util');
+const { explorerBaseUrl } = require('../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -44,7 +45,7 @@ module.exports = {
         }
         if (!!transactionResult.result) {
             return interaction.editReply(
-                `Your tip of \`${amount}\` $ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<https://explorer.harmony.one/tx/${transactionResult.result}>)`);
+                `Your tip of \`${amount}\` $ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
         }
         return interaction.editReply({ content: 'Unknown error', components: [] });
     },

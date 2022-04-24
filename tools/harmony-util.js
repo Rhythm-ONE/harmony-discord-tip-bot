@@ -4,16 +4,16 @@ const { Account } = require('@harmony-js/account');
 const { hexToNumber, fromWei, Units, Unit } = require('@harmony-js/utils');
 const { rpcSettings } = require('../config.json');
 
-const hmy = new Harmony(
-    rpcSettings.rpcUrl,
-    {
-        chainType: rpcSettings.chainType,
-        chainId: rpcSettings.chainId,
-    },
-);
-
 module.exports = {
     getBalance: (privateKey) => {
+        const hmy = new Harmony(
+            rpcSettings.rpcUrl,
+            {
+                chainType: rpcSettings.chainType,
+                chainId: rpcSettings.chainId,
+            },
+        );
+
         return hmy.blockchain
             .getBalance({ address: getAddressFromPrivateKey(privateKey) })
             .then((response) => fromWei(hexToNumber(response.result), Units.one))
@@ -24,6 +24,14 @@ module.exports = {
     },
 
     sendTransaction: async (privateKeyFrom, sendToAddress, amount) => {
+        const hmy = new Harmony(
+            rpcSettings.rpcUrl,
+            {
+                chainType: rpcSettings.chainType,
+                chainId: rpcSettings.chainId,
+            },
+        );
+
         hmy.wallet.addByPrivateKey(privateKeyFrom);
 
         const txn = hmy.transactions.newTx({
