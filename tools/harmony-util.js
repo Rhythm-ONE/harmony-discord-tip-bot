@@ -1,19 +1,19 @@
 const { Harmony } = require('@harmony-js/core');
 const { getAddressFromPrivateKey } = require('@harmony-js/crypto');
 const { Account } = require('@harmony-js/account');
+const { hexToNumber, fromWei, Units, Unit } = require('@harmony-js/utils');
+const { rpcSettings } = require('../config.json');
 
-const { ChainID, ChainType, hexToNumber, fromWei, Units, Unit } = require('@harmony-js/utils');
+const hmy = new Harmony(
+    rpcSettings.rpcUrl,
+    {
+        chainType: rpcSettings.chainType,
+        chainId: rpcSettings.chainId,
+    },
+);
 
 module.exports = {
     getBalance: (privateKey) => {
-        const hmy = new Harmony(
-            'https://api.s0.t.hmny.io/',
-            {
-                chainType: ChainType.Harmony,
-                chainId: ChainID.HmyMainnet,
-            },
-        );
-
         return hmy.blockchain
             .getBalance({ address: getAddressFromPrivateKey(privateKey) })
             .then((response) => fromWei(hexToNumber(response.result), Units.one))
@@ -24,14 +24,6 @@ module.exports = {
     },
 
     sendTransaction: async (privateKeyFrom, sendToAddress, amount) => {
-        const hmy = new Harmony(
-            'https://api.s0.t.hmny.io/',
-            {
-                chainType: ChainType.Harmony,
-                chainId: ChainID.HmyMainnet,
-            },
-        );
-
         hmy.wallet.addByPrivateKey(privateKeyFrom);
 
         const txn = hmy.transactions.newTx({
@@ -44,8 +36,8 @@ module.exports = {
         });
 
         const signedTxn = await hmy.wallet.signTransaction(txn);
-        const txnHash = await hmy.blockchain.sendTransaction(signedTxn);
-        return txnHash;
+        const result = await hmy.blockchain.sendTransaction(signedTxn);
+        return result;
     },
 
     getAddress: (privateKey) => new Account(privateKey).bech32Address

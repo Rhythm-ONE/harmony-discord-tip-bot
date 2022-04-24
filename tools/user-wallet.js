@@ -1,6 +1,6 @@
 const { ref, child, get, set } = require('firebase/database');
 const { firebaseConfig, encryptionPassword } = require('../config.json');
-var admin = require("firebase-admin");
+var admin = require('firebase-admin');
 var serviceAccount = require(firebaseConfig.pathToServiceAccount);
 const { encryptPhrase, decryptPhrase, generatePrivateKey} = require('@harmony-js/crypto');
 

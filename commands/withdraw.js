@@ -1,7 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getWalletPrivateKey } = require('../tools/user-wallet');
 const { getBalance, sendTransaction, getAddress } = require('../tools/harmony-util');
-const { MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js')
+const { MessageActionRow, MessageButton } = require('discord.js');
+const { explorerBaseUrl } = require('../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -48,7 +49,7 @@ module.exports = {
                     .setStyle('SECONDARY'),
             );
 
-        interaction.editReply({
+        await interaction.editReply({
             content: `Are you sure you'd like to withdraw \`${amount}\` $ONE to address \`${receiverAddress}\`?`,
             components: [row]
         });
@@ -67,18 +68,24 @@ module.exports = {
                 return 'timeout';
             });
 
-        switch(selection) {
+        switch (selection) {
             case 'confirm':
-                interaction.editReply({content: 'Working on it...', components: []});
-                const transaction = await sendTransaction(senderPrivateKey, receiverAddress, amount);
-                return interaction.editReply(
-                    `Your withdrawal of \`${amount}\` $ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<https://explorer.harmony.one/tx/${transaction.result}>)`);
+                interaction.editReply({ content: 'Working on it...', components: [] });
+                const transactionResult = await sendTransaction(senderPrivateKey, receiverAddress, amount);
+                if (!!transactionResult.error) {
+                    return interaction.editReply(`Error sending transaction: ${transactionResult.error.message}`);
+                }
+                if (!!transactionResult.result) {
+                    return interaction.editReply(
+                        `Your withdrawal of \`${amount}\` $ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
+                }
+                return interaction.editReply({ content: 'Unknown error', components: [] });
             case 'cancel':
-                return interaction.editReply({content: 'Withdrawal canceled', components: []});
+                return interaction.editReply({ content: 'Withdrawal canceled', components: [] });
             case 'timeout':
-                return interaction.editReply({content: 'Withdrawal automatically canceled due to user interaction timeout', components: []});
+                return interaction.editReply({ content: 'Withdrawal automatically canceled due to user interaction timeout', components: [] });
             default:
-                return interaction.editReply('Unknown error');
+                return interaction.editReply({ content: 'Unknown error', components: [] });
         }
     },
 };

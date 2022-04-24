@@ -1,0 +1,15 @@
+{
+    "clientId": "<Discord application client ID>",
+    "discordToken": "<Discord bot token>",
+    "encryptionPassword": "12345",
+    "firebaseConfig": {
+        "databaseURL": "https://url-to-your-database.firebaseio.com",
+        "pathToServiceAccount": "/wherever/you/put/it/firebase-adminsdk.json"
+    },
+    "rpcSettings": {
+        "rpcUrl": "https://api.s0.t.hmny.io/",
+        "chainType": "hmy",
+        "chainId": 1
+    },
+    "explorerBaseUrl": "https://explorer.harmony.one/tx/"
+}

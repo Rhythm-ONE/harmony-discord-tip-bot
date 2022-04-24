@@ -37,9 +37,15 @@ module.exports = {
         }
 
         var receiverAddress = getAddress(receiverPrivateKey);
-        var transaction = await sendTransaction(senderPrivateKey, receiverAddress, amount);
+        var transactionResult = await sendTransaction(senderPrivateKey, receiverAddress, amount);
 
-        return interaction.editReply(
-            `Your tip of \`${amount}\` $ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<https://explorer.harmony.one/tx/${transaction.result}>)`);
+        if (!!transactionResult.error) {
+            return interaction.editReply(`Error sending tip: ${transactionResult.error.message}`);
+        }
+        if (!!transactionResult.result) {
+            return interaction.editReply(
+                `Your tip of \`${amount}\` $ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<https://explorer.harmony.one/tx/${transactionResult.result}>)`);
+        }
+        return interaction.editReply({ content: 'Unknown error', components: [] });
     },
 };
