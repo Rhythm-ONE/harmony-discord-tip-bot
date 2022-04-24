@@ -48,5 +48,6 @@ module.exports = {
         return result;
     },
 
-    getAddress: (privateKey) => new Account(privateKey).bech32Address
+    getONEAddressFormat: (privateKey) => new Account(privateKey).bech32Address,
+    getETHAddressFormat: (privateKey) => new Account(privateKey).checksumAddress
 }

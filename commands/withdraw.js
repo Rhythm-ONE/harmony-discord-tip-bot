@@ -1,15 +1,14 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getWalletPrivateKey } = require('../tools/user-wallet');
-const { getBalance, sendTransaction, getAddress } = require('../tools/harmony-util');
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { getBalance, sendTransaction, getONEAddressFormat } = require('../tools/harmony-util');
 const { explorerBaseUrl } = require('../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('withdraw')
-        .setDescription('Withdraw $ONE to a given address')
-        .addStringOption(option => option.setName('address').setDescription('Address to send the $ONE to').setRequired(true))
-        .addNumberOption(option => option.setName('amount').setDescription('Amount of $ONE to withdraw').setRequired(true)),
+        .setDescription('Withdraw ONE to a given address')
+        .addStringOption(option => option.setName('address').setDescription('Address to send the ONE to').setRequired(true))
+        .addNumberOption(option => option.setName('amount').setDescription('Amount of ONE to withdraw').setRequired(true)),
     async execute(interaction) {
         await interaction.reply({ content: 'Working on it...', ephemeral: true });
 
@@ -26,7 +25,7 @@ module.exports = {
             return interaction.editReply('Error retrieving wallet information');
         }
 
-        const senderAddress = getAddress(senderPrivateKey);
+        const senderAddress = getONEAddressFormat(senderPrivateKey);
         if (senderAddress == receiverAddress) {
             return interaction.editReply('You must send to a different address than your discord tip bot\'s');
         }
@@ -34,7 +33,7 @@ module.exports = {
         const senderBalance = await getBalance(senderPrivateKey);
 
         if (senderBalance < amount) {
-            return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` $ONE`)
+            return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` ONE`)
         }
 
         const transactionResult = await sendTransaction(senderPrivateKey, receiverAddress, amount);
@@ -43,58 +42,7 @@ module.exports = {
         }
         if (!!transactionResult.result) {
             return interaction.editReply(
-                `Your withdrawal of \`${amount}\` $ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
+                `Your withdrawal of \`${amount}\` ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
         }
-
-        // const row = new MessageActionRow()
-        //     .addComponents(
-        //         new MessageButton()
-        //             .setCustomId('confirm')
-        //             .setLabel('Submit')
-        //             .setStyle('PRIMARY'),
-        //         new MessageButton()
-        //             .setCustomId('cancel')
-        //             .setLabel('Cancel')
-        //             .setStyle('SECONDARY'),
-        //     );
-
-        // const reply = await interaction.editReply({
-        //     content: `Are you sure you'd like to withdraw \`${amount}\` $ONE to address \`${receiverAddress}\`?`,
-        //     components: [row]
-        // });
-
-        // const filter = i => {
-        //     i.deferUpdate();
-        //     return i.user.id === interaction.user.id;
-        // };
-
-        // console.log(reply);
-
-        // var selection = await reply.awaitMessageComponent({ filter, componentType: 'BUTTON', time: 30000 })
-        //     .then(buttonInteraction => {
-        //         return buttonInteraction.customId;
-        //     }).catch(err => {
-        //         return 'timeout';
-        //     });
-
-        // switch (selection) {
-        //     case 'confirm':
-        //         interaction.editReply({ content: 'Working on it...', components: [] });
-        //         const transactionResult = await sendTransaction(senderPrivateKey, receiverAddress, amount);
-        //         if (!!transactionResult.error) {
-        //             return interaction.editReply(`Error sending transaction: ${transactionResult.error.message}`);
-        //         }
-        //         if (!!transactionResult.result) {
-        //             return interaction.editReply(
-        //                 `Your withdrawal of \`${amount}\` $ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
-        //         }
-        //         return interaction.editReply({ content: 'Unknown error', components: [] });
-        //     case 'cancel':
-        //         return interaction.editReply({ content: 'Withdrawal canceled', components: [] });
-        //     case 'timeout':
-        //         return interaction.editReply({ content: 'Withdrawal automatically canceled due to user interaction timeout', components: [] });
-        //     default:
-        //         return interaction.editReply({ content: 'Unknown error', components: [] });
-        // }
-    },
+    }
 };

@@ -1,21 +1,21 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getWalletPrivateKey } = require('../tools/user-wallet');
-const { getBalance, sendTransaction, getAddress } = require('../tools/harmony-util');
+const { getBalance, sendTransaction, getONEAddressFormat } = require('../tools/harmony-util');
 const { explorerBaseUrl } = require('../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('tip')
-        .setDescription('Tip the user a given amount of $ONE')
+        .setDescription('Tip the user a given amount of ONE')
         .addUserOption(option => option.setName('user').setDescription('The user').setRequired(true))
-        .addNumberOption(option => option.setName('amount').setDescription('Amount of $ONE to tip').setRequired(true)),
+        .addNumberOption(option => option.setName('amount').setDescription('Amount of ONE to tip').setRequired(true)),
     async execute(interaction) {
         await interaction.reply('Working on it...');
 
         const amount = interaction.options.getNumber('amount');
 
         if (amount < 0.1 || amount > 100) {
-            return interaction.editReply('The amount must be between 0.1 and 100 $ONE');
+            return interaction.editReply('The amount must be between 0.1 and 100 ONE');
         }
 
         const receivingUser = interaction.options.getUser('user');
@@ -34,10 +34,10 @@ module.exports = {
         var senderBalance = await getBalance(senderPrivateKey);
 
         if (senderBalance < amount) {
-            return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` $ONE`)
+            return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` ONE`)
         }
 
-        var receiverAddress = getAddress(receiverPrivateKey);
+        var receiverAddress = getONEAddressFormat(receiverPrivateKey);
         var transactionResult = await sendTransaction(senderPrivateKey, receiverAddress, amount);
 
         if (!!transactionResult.error) {
@@ -45,7 +45,7 @@ module.exports = {
         }
         if (!!transactionResult.result) {
             return interaction.editReply(
-                `Your tip of \`${amount}\` $ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
+                `Your tip of \`${amount}\` ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
         }
         return interaction.editReply({ content: 'Unknown error', components: [] });
     },
