@@ -37,8 +37,6 @@ module.exports = {
             return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` ONE`)
         }
 
-
-
         const transactionResult = await sendTransaction(senderPrivateKey, receiverAddress, amount);
 
         if (!!transactionResult.error) {
