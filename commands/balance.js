@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getWalletPrivateKey } = require('../tools/user-wallet');
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js');
 const { getBalance, getONEAddressFormat, getETHAddressFormat } = require('../tools/harmony-util');
 
 module.exports = {
@@ -27,7 +27,6 @@ module.exports = {
             .setThumbnail('https://imgur.com/eueaK1n.png')
             .setDescription(
                 `\`${oneBalance}\` ONE`)
-            .setTitle('Balance')
             .addFields(
                 { name: 'ONE formatted address', value: `[${oneAddress}](<https://explorer.harmony.one/address/${oneAddress}>)` },
                 { name: 'ETH formatted address', value: `[${ethAddress}](<https://explorer.harmony.one/address/${ethAddress}>)` },

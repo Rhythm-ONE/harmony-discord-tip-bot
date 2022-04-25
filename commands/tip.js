@@ -1,7 +1,19 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getWalletPrivateKey } = require('../tools/user-wallet');
 const { getBalance, sendTransaction, getONEAddressFormat } = require('../tools/harmony-util');
+const { MessageEmbed } = require('discord.js');
 const { explorerBaseUrl } = require('../config.json');
+
+function getUserNickname(user, guild) {
+    let result = user.username;
+    try {
+        const guildMember = guild.members.cache.get(user.id);
+        if (!!guildMember.displayName) {
+            result = guildMember.displayName;
+        }
+    } catch { }
+    return result;
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,11 +33,11 @@ module.exports = {
         const receivingUser = interaction.options.getUser('user');
 
         if (receivingUser.bot) {
-            return interaction.editReply('Unable to send a tip to a bot');
+            return interaction.editReply('Unable to tip a bot');
         }
 
         if (receivingUser.id == interaction.user.id) {
-            return interaction.editReply('Unable to send a tip to yourself');
+            return interaction.editReply('Unable to tip yourself');
         }
 
         var receiverPrivateKey = await getWalletPrivateKey(receivingUser.id);
@@ -47,10 +59,32 @@ module.exports = {
         if (!!transactionResult.error) {
             return interaction.editReply(`Error sending tip: ${transactionResult.error.message}`);
         }
+        const receiverNickname = getUserNickname(receivingUser, interaction.guild);
+        const senderNickname = getUserNickname(interaction.user, interaction.guild);
         if (!!transactionResult.result) {
-            const initialReply = await interaction.editReply(
-                `Your tip of \`${amount}\` ONE to \`${receivingUser.username}\` was successful. \nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
-            initialReply.reply({ content: `<@${receivingUser.id}> You've been tipped!` })
+            const interactionEmbed = new MessageEmbed()
+                .setColor('#00AEE9')
+                .setTitle('Tip')
+                .setDescription(
+                    `Your tip of \`${amount}\` ONE to \`${receiverNickname}\` was successful.\n\n` +
+                    `Transaction details can be found [here](<${explorerBaseUrl}${transactionResult.result}>)`)
+                .setTimestamp();
+
+            const initialReply = await interaction.editReply({ content: null, embeds: [interactionEmbed] });
+
+            const receiverEmbed = new MessageEmbed()
+                .setColor('#00AEE9')
+                .setTitle('Tip')
+                .setDescription(
+                    `You've been tipped \`${amount}\` ONE by ${senderNickname}! [Click here](<${initialReply.url}>) to see the tip.`)
+                .setTimestamp();
+
+            receivingUser
+                .send({ embeds: [receiverEmbed] })
+                .catch(function (error) { // If the user has DMs turned off for the server ping them in the channel where they were tipped
+                    initialReply.reply({ content: `<@${receivingUser.id}> You've been tipped!` });
+                });
+
             return;
         }
         return interaction.editReply({ content: 'Unknown error', components: [] });

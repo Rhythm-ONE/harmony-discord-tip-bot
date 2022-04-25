@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getWalletPrivateKey } = require('../tools/user-wallet');
 const { getBalance, sendTransaction, getONEAddressFormat } = require('../tools/harmony-util');
+const { MessageEmbed } = require('discord.js')
 const { explorerBaseUrl } = require('../config.json');
 
 module.exports = {
@@ -36,13 +37,23 @@ module.exports = {
             return interaction.editReply(`Insufficient balance. Current balance: \`${senderBalance}\` ONE`)
         }
 
+
+
         const transactionResult = await sendTransaction(senderPrivateKey, receiverAddress, amount);
+
         if (!!transactionResult.error) {
             return interaction.editReply(`Error sending transaction: ${transactionResult.error.message}`);
         }
         if (!!transactionResult.result) {
-            return interaction.editReply(
-                `Your withdrawal of \`${amount}\` ONE to address \`${receiverAddress}\` was successful.\nTransaction details can be found [HERE](<${explorerBaseUrl}${transactionResult.result}>)`);
+            const embed = new MessageEmbed()
+                .setColor('#00AEE9')
+                .setTitle('Withdraw')
+                .setDescription(
+                    `Your withdrawal of \`${amount}\` ONE to address \`${receiverAddress}\` was successful.\n\n` +
+                    `Transaction details can be found [here](<${explorerBaseUrl}${transactionResult.result}>)`)
+                .setTimestamp();
+
+            return interaction.editReply({content: null, embeds: [embed], ephemeral: true});
         }
     }
 };
